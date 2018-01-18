@@ -1,11 +1,14 @@
 package processamentoDeImagem;
 
-import java.awt.*;
+import java.awt.Color;
+//import java.awt.Point;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
+
 import javax.imageio.ImageIO;
+import org.opencv.core.Point;
 
 public class CoronaDetector {
 	
@@ -15,7 +18,7 @@ public class CoronaDetector {
 	
 	int height;
 	
-	public ArrayList<int[]> detector(String path) {
+	public List<Point> detector(String path) {
 		try {
 			
 			File input = new File(path);
@@ -47,8 +50,8 @@ public class CoronaDetector {
 				}
 			}//fim do for			
 			//determinação das posições	dos clusters		
-			
-			ArrayList<int[]>locations = new ArrayList<>();
+		
+			List<Point> lstPoints = new ArrayList<Point>();
 						
 			while(selection.size()>0) {
 				int count = 0;
@@ -64,10 +67,8 @@ public class CoronaDetector {
 				}
 				
 				if (count > 50) {					
-					int[] positions = new int[2];
-					positions[0] = selection.get(0)[0];
-					positions[1] = selection.get(0)[1];						
-					locations.add(positions);
+					
+					lstPoints.add(new Point(selection.get(0)[0],selection.get(0)[1]));					
 					selection.remove(0);
 				}
 				else {
@@ -75,26 +76,27 @@ public class CoronaDetector {
 				}				
 			}//fim do for z
 			
-			return locations;
+			return lstPoints;
 					
 		} catch (Exception e) {
 			System.out.println("Possível problema no carregamento da imagem!");
 			System.out.println(e);
-			ArrayList<int[]>falha = new ArrayList<>();
-			int[] f = new int[2];
-			f[0] = 777;
-			f[1] = 777;
-			falha.add(f);
+			List<Point> falha = new ArrayList<Point>();
+			Point pt = new Point();
+			pt.x = 777;
+			pt.y = 777;
+			falha.add(pt);			
 			return falha;
 			}		
 	}
 	static public void main(String args[]) throws Exception{
 		
-		String path2 = "/home/siad-aero/workspace/CoronaDetector6/src/processamentoDeImagem/telhado2.jpg";
-		CoronaDetector obj = new CoronaDetector();
-		ArrayList<int[]>result = obj.detector(path2);
-		for(int[] aux:result) {
-			System.out.println(Arrays.toString(aux));			
+		String path2 = "/home/siad-aero/workspace/CoronaDetector6/src/processamentoDeImagem/corona-4.jpg";
+		CoronaDetector obj = new CoronaDetector();	
+		List<Point> resultado = obj.detector(path2);
+		
+		for(Point aux:resultado){
+			System.out.println(aux);
 		}		
 	}
 }
